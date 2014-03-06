@@ -5,7 +5,13 @@
 #define MLEN 	80
 #define MRIBBON 1000
 #define MRULES	2000
+#define MRS 	100
 #define MPNAME 	10
+
+char ruledel = ':';
+char rdel[] = ":";
+char exprdel = ';';
+char edel[] = ";";
 
 
 int normalize(char * il)
@@ -19,8 +25,8 @@ int checkExpr(char * il, char * rules)
 	char *string3 = strstr(rules, il);
 	int addr;
 
-	printf("%s\n", rules);
-	printf("%s\n", il);
+	//printf("%s\n", rules);
+	//printf("%s\n", il);
 
 	if (string3 != NULL)
 	{
@@ -30,6 +36,23 @@ int checkExpr(char * il, char * rules)
 	return -1;
 }
 
+int getRule(int soffs, char * rules)
+{
+	// looking for the beggining of rule
+	int i, b;
+
+	for(i = soffs; i>=0; i--)
+	{
+		if (rules[i] == ruledel) 
+		{
+			b=i+1;
+			break;
+		}
+		else b = i;
+	}
+	// now b is the index of the first byte of rule
+	return b;
+}
 
 int main ()
 {
@@ -40,8 +63,8 @@ int main ()
 	int rn; // ribbon new expressions starts here.
 	int re; // ribbon end.
 	char rules[MRULES]; 	// list of rules applicable to the case.
-	char ruledel = ':';
-	char exprdel = ';';
+	char * crule;
+	int rsize;	// rule size;
 	int c;
 	char * pname;
 	int soffs; 	// input offset
@@ -92,6 +115,15 @@ int main ()
 
 	soffs = checkExpr(il, rules);
 	printf("Offset = %d\n", soffs);
+
+	if ( soffs >=0 )
+	{
+		rsize = getRule(soffs, rules); // extracting the rule from
+		crule = strtok( &rules[rsize], rdel );
+
+		printf("crule: %s\n", crule);
+
+	}
 
 	// now the main loop of pattern search and defs application
 

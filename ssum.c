@@ -34,6 +34,19 @@ int checkExpr(char * il, char * rules)
 	return -1;
 }
 
+int findDef(char * pname, char * rules)
+{
+	char pn[MLEN];
+	int lpn = strlen(pname);
+	memset(pn, 0 , MLEN);
+	strcpy (pn, pname);
+	pn[lpn] = ' ';
+	pn[lpn+1] = '=';
+	pn[lpn+2] = '=';
+
+	return checkExpr(pn, rules);
+}
+
 int getRule(int soffs, char * rules)
 {
 	// looking for the beggining of rule
@@ -80,12 +93,20 @@ int applyRule(char * il, char * rule)
 		}
 
 		rapp [i + j - rb - ril] = 0;
-		
+
 		printf("substituted: %s\n", rapp);
 
 		// check if we have expression of type "X Y =="
 		t = strtok(rapp, " ");
-		if (t != NULL ) printf("%s\n", t);
+		if (t != NULL ) 
+		{
+			printf("%s\n", t);
+			if ( (t[0]!= 'X') && (t[0] != '='))		
+			{
+				strcpy(rapp1, t); // copy Y expression
+			}
+		}
+			
 		for (i=0; i<2; i++) {
 			t = strtok(NULL, " ");
 			
@@ -100,7 +121,7 @@ int applyRule(char * il, char * rule)
 
 				if ( (t[0]!= 'X') && (t[0] != '='))		
 				{
-					strcpy(rapp1, t);
+					strcpy(rapp1, t); // copy Y expression
 				}
 			}
 		}
@@ -125,9 +146,9 @@ int main ()
 	FILE* fp;
 	char il[MLEN];
 	char ribbon[MRIBBON]; //the ribbon of calculations.
-	int rp; // the ribbon phrase beggining
-	int rn; // ribbon new expressions starts here.
-	int re; // ribbon end.
+	int rp = 0; // the ribbon phrase beggining
+	int rn = 0; // ribbon new expressions starts here.
+	int re = 0; // ribbon end.
 	char rules[MRULES]; 	// list of rules applicable to the case.
 	char * crule;
 	int rsize;	// rule size;
@@ -192,22 +213,54 @@ int main ()
 
 	if ( soffs >=0 )
 	{
-		rsize = getRule(soffs, rules); // extracting the rule from
-		crule = strtok( &rules[rsize], rdel );
+		rsize = getRule(soffs, rules); // extracting the rule from the list of rules
+		crule = strtok( &rules[rsize], rdel );	//extract full rule string
 
 		printf("crule: %s\n", crule);
 
-		applyRule(il, crule);
+		if (applyRule(il, crule) >=0 ) // apply rule type of 'X Y ==' or 'Y X =='.
+		{
+			printf("Answer: %s\n", crule);
+			return 0;
+		}
 
-		printf("%s\n", crule);
-
+	}else
+	{
+		printf("Does not match any rule. Continue...\n");
 	}
 
 	// now the main loop of pattern search and defs application
+	memset(ribbon, 0, MRIBBON);
+
+	strcpy (ribbon, il);
+	re += strlen(il);
+	ribbon[re++] = edel[0];
+	ribbon[re++] = '\n';
 
 
+	printf("%s\n", ribbon);
 
+	// getting names from rules list.
 	pname = strtok (il," ");
+	printf("Name: %s\n", pname);
+
+	soffs = findDef(pname, rules); // looking for definition of name in the rules list.
+	printf("Offset = %d\n", soffs);
+
+	if ( soffs >=0 )
+	{
+		rsize = getRule(soffs, rules); // extracting the rule from the list of rules
+		crule = strtok( &rules[rsize], rdel );	//extract full rule string
+
+		printf("Definition: %s\n", crule);
+
+		// apply name
+		
+
+	}else
+	{
+		printf("Definition of name is not found. Continue...\n");
+	}
 
 
 

@@ -141,10 +141,63 @@ int applyRule(char * il, char * rule)
 
 }
 
+int applyName(char * il, char * crule, char * pname)
+{
+	// substitute name with the rule.
+	int rl = strlen(crule);
+	int ril = strlen(il);
+	int rb = (strstr(crule, pname) - crule);
+	int rn = (strstr (il, pname) - il);
+	char rapp[MRS]; // tempopary array to check the rule.
+	char *t;
+	int i, j;
+	j=0;
+	for (i=0; i<rn; i++)
+	{
+		rapp[j++] = il[i];
+	}
+	rapp[j] = 0;
+	printf("%s\n", rapp);
+	for (i=0; i<rb; i++)
+	{
+		rapp[j++] = crule[i];
+	}
+	rapp[j] = 0;
+	printf("%s\n", rapp);
+
+	printf("pname length:%d\n", strlen(pname) );
+	printf("il: %s\n", il);
+	
+	for(i = rn + strlen(pname)+1; i<ril; i++)
+	{
+		rapp[j++] = il[i];
+	}
+	rapp[j] = 0;
+
+	printf("%s\n", rapp);
+	memset(crule, 0, rl);
+	strcpy (crule, rapp);
+	return 0;
+
+}
+
+int addToRibbon(char * ribbon, char * str)
+{
+	int l = strlen(ribbon);
+	strcpy (ribbon + l, str);
+	l += strlen(str);
+	ribbon[l++] = edel[0];
+	ribbon[l++] = '\n';
+
+	return 0;
+}
+
+
 int main ()
 {
 	FILE* fp;
 	char il[MLEN];
+	char ilc[MLEN];
 	char ribbon[MRIBBON]; //the ribbon of calculations.
 	int rp = 0; // the ribbon phrase beggining
 	int rn = 0; // ribbon new expressions starts here.
@@ -240,6 +293,8 @@ int main ()
 
 	printf("%s\n", ribbon);
 
+	strcpy(ilc, il); // copy input line.
+
 	// getting names from rules list.
 	pname = strtok (il," ");
 	printf("Name: %s\n", pname);
@@ -255,12 +310,22 @@ int main ()
 		printf("Definition: %s\n", crule);
 
 		// apply name
-		
+		printf("il before: %s\n", ilc);
+		if ( applyName(ilc, crule, pname) >=0 )
+		{
+			printf("Converted string: %s\n", crule);
+
+			//add to ribbon
+			addToRibbon(ribbon, crule);
+		}
 
 	}else
 	{
-		printf("Definition of name is not found. Continue...\n");
+		printf("Definition of name is not found. Please define the name and retry.\n");
+		return 0;
 	}
+
+	printf("Ribbon: %s\n", ribbon);
 
 
 

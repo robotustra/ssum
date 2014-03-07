@@ -327,7 +327,8 @@ int main ()
 
 	printf("Ribbon: %s\n", ribbon);
 
-
+	// find all names in the definition.
+	// find all operations in rules.
 
 
 

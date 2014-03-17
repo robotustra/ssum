@@ -235,49 +235,6 @@ int findAllSymbols(char * crule, char * st1[MAXNESTING], char * symbol)
 int hasInnerParencesBalanced (char * crule)
 {
 	/*Checks if the inner fragment contain any balanced parences*/
-	char * st1[20]; // up to 20 opening [
-	char * st2[20]; // up to 20 closing ]
-	
-	int offs1 = -1;
-	int offs2 = -1;
-	char sstr[MLEN];
-	int i, j, c = 0;
-	
-	memset(sstr, 0, MLEN);
-
-	// find all opening parences
-	i = findAllSymbols(crule, st1, "[");
-	j = findAllSymbols (crule, st2, "]");
-	if (i == j && (i > 0) )	
-	{
-		return i;
-	}else
-	{
-		printf("Unbalanced parences, check the rule: %s", crule);
-		return -1;
-	}
-	i = findAllSymbols(crule, st1, "(");
-	j = findAllSymbols (crule, st2, ")");
-	if (i == j && (i > 0) )	
-	{
-		return i;
-	}else
-	{
-		printf("Unbalanced parences, check the rule: %s", crule);
-		return -2;
-	}
-	i = findAllSymbols(crule, st1, "{");
-	j = findAllSymbols (crule, st2, "}");
-	if (i == j && (i > 0) )	
-	{
-		return  i;
-	}else
-	{
-		printf("Unbalanced parences, check the rule: %s", crule);
-		return -3;
-	}
-
-	return 0;
 }
 
 int cutInnerParam( char * crule)
@@ -475,9 +432,9 @@ int main ()
 	{
 		//isSignature(crule);
 
-		if ( i = hasInnerParencesBalanced(crule)) 
+		if (cutInnerParam(crule)) 
 		{
-			printf("Parences: %d\n", i);
+			printf("After cut of param: %s\n", crule);
 		}
 
 		//printf("%s\n",crule);
